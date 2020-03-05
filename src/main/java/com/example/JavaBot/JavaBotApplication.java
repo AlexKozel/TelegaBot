@@ -1,11 +1,12 @@
 package com.example.JavaBot;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.JavaBot.Entity.LoadQuestions;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.telegram.telegrambots.ApiContextInitializer;
-import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.io.FileNotFoundException;
 
@@ -13,12 +14,9 @@ import java.io.FileNotFoundException;
 @SpringBootApplication
 public class JavaBotApplication {
 
-	@Autowired
-	Bot bot;
-
-
 	public static void main(String[] args) {
-		SpringApplication.run(JavaBotApplication.class, args);
+
+		ApplicationContext context= SpringApplication.run(JavaBotApplication.class, args);
 		ApiContextInitializer.init();
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 		try {
@@ -28,13 +26,11 @@ public class JavaBotApplication {
 		}
 
 
-////		LoadQuestions loadQuestions = context.getBean(LoadQuestions.class);
-//
-//		try {
-//			loadQuestions.load("src/main/resources/question1.txt");
-//		} catch (FileNotFoundException e){
-//			System.out.println("File not found");
-//		}
-
+		LoadQuestions loadQuestions = context.getBean(LoadQuestions.class);
+		try {
+			loadQuestions.load("src/main/resources/question21.txt");
+		} catch (FileNotFoundException e){
+			System.out.println("File not found");
+		}
 	}
 }
