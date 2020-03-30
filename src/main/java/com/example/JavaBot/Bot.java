@@ -1,35 +1,34 @@
 package com.example.JavaBot;
 
-import com.example.JavaBot.Entity.LoadQuestions;
-import com.example.JavaBot.Entity.Questions;
-import com.example.JavaBot.Entity.QuestionsRepository;
-import com.example.JavaBot.TestDb.Login;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.JavaBot.Entity.CapitalsInfo;
+import com.example.JavaBot.repository.CapitalRepository;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-
-
 public class Bot extends TelegramLongPollingBot {
 
-    LoadQuestions loadQuestions;
 
+    public void setRepository(CapitalRepository repository) {
+        this.repository = repository;
+    }
 
-
+    private CapitalRepository repository;
     /**
      * Метод для приема сообщений.
+     *
      * @param update Содержит сообщение от пользователя.
      */
     @Override
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
-        sendMsg(update.getMessage().getChatId().toString(), message);
-        System.out.println(message.equals("1"));
-        if (message.equals("1")) {
-            add(update.getMessage().getChatId().toString());
-        }
+            repository.save(new CapitalsInfo(message, "Belarus"));
+        sendMsg(update.getMessage().getChatId().toString(), repository.findAll().toString());
+
+
+
+
     }
 
     /**
@@ -38,7 +37,6 @@ public class Bot extends TelegramLongPollingBot {
      * @param chatId id чата
      * @param s      Строка, которую необходимот отправить в качестве сообщения.
      */
-
     public synchronized void sendMsg(String chatId, String s) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
@@ -48,7 +46,6 @@ public class Bot extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-
         }
     }
 
@@ -59,7 +56,7 @@ public class Bot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotUsername() {
-        return "MyBrestBot";
+        return "StrangeTravelBot";
     }
 
     /**
@@ -69,17 +66,7 @@ public class Bot extends TelegramLongPollingBot {
      */
     @Override
     public String getBotToken() {
-        return "434674213:AAELV8ScfbP7yaoFkUds1wvzBNJSQ2kydMs";
-    }
-
-    @Autowired
-    public void setLoadQuestions(LoadQuestions loadQuestions){
-        this.loadQuestions = loadQuestions;
-    }
-
-    public void add(String chatId) {
-        Login login = new Login();
-        sendMsg(chatId, login.get(chatId,36L));
+        return "674324539:AAHCKOgHc_zFjYFVb6tIf4nB1eu7UN3IJV8";
     }
 
 }
