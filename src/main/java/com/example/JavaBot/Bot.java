@@ -1,20 +1,29 @@
 package com.example.JavaBot;
 
 import com.example.JavaBot.Entity.CapitalsInfo;
-import com.example.JavaBot.repository.CapitalRepository;
+import com.example.JavaBot.Service.CapitalsInfoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Optional;
+
 public class Bot extends TelegramLongPollingBot {
 
+    private final Logger LOG = LoggerFactory.getLogger(Bot.class);
 
-    public void setRepository(CapitalRepository repository) {
-        this.repository = repository;
+    private final String CAPITAL_IS_NOT_FOUND = "Столица не найдена. убедитесь что первая буква заглавная и название столицы указано без ошибок.";
+    private final String HELLO_MESSAGE = "Введите название любой столицы, для получения информации...";
+
+    //setter foe Spring DI
+    public void setService(CapitalsInfoService service) {
+        this.service = service;
     }
 
-    private CapitalRepository repository;
+    private CapitalsInfoService service;
     /**
      * Метод для приема сообщений.
      *
@@ -23,11 +32,15 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
-            repository.save(new CapitalsInfo(message, "Belarus"));
-        sendMsg(update.getMessage().getChatId().toString(), repository.findAll().toString());
 
-
-
+        if(message.equalsIgnoreCase("/start")){
+            sendMsg(update.getMessage().getChatId().toString(), HELLO_MESSAGE);
+            return;
+        }
+        Optional<CapitalsInfo> capitalsInfo = service.findByName(message);
+        if(capitalsInfo.isPresent()){
+            sendMsg(update.getMessage().getChatId().toString(), capitalsInfo.get().getDescription());
+        } else sendMsg(update.getMessage().getChatId().toString(), CAPITAL_IS_NOT_FOUND);
 
     }
 
@@ -46,6 +59,7 @@ public class Bot extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
+            LOG.error(e.getMessage());
         }
     }
 
