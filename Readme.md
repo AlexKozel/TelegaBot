@@ -12,7 +12,8 @@
 - http://localhost:8080/h2-console/
     
 ## Start it like simple Spring Boot Application
-```@SpringBootApplication
+```Java
+       @SpringBootApplication
        public class JavaBotApplication {
        
            private static final Logger LOG = LoggerFactory.getLogger(JavaBotApplication.class);
