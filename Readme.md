@@ -3,6 +3,10 @@
 ### All API you can find att :
 - http://localhost:8080/v2/api-docs
 - http://localhost:8080/swagger-ui.html 
+
+## Bot Registration
+- name - StrangeTravelBot
+- token - 674324539:AAHCKOgHc_zFjYFVb6tIf4nB1eu7UN3IJV8
     
 ### And check int in DB 
 - http://localhost:8080/h2-console/
