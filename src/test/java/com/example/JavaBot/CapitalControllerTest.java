@@ -1,6 +1,7 @@
 package com.example.JavaBot;
 
 import com.example.JavaBot.Entity.CapitalsInfo;
+import com.example.JavaBot.Entity.CapitalsInfoValidator;
 import com.example.JavaBot.Service.CapitalsInfoService;
 import com.example.JavaBot.controller.CapitalController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,10 +28,12 @@ import static org.mockito.BDDMockito.*;
 public class CapitalControllerTest {
 
     private final Optional<CapitalsInfo> BERLIN = Optional.of(new CapitalsInfo("Berlin", "quadratisch praktisch gut"));
-    private final CapitalsInfo PARIS = new CapitalsInfo("Berlin", "la france");
+    private final CapitalsInfo PARIS = new CapitalsInfo("Paris", "la france");
 
     @MockBean
     private CapitalsInfoService service;
+    @MockBean
+    CapitalsInfoValidator validator;
     @Autowired
     private MockMvc mockMvc;
 
