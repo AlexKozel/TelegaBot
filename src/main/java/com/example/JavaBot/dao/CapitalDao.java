@@ -44,10 +44,6 @@ public class CapitalDao {
         repository.deleteById(id);
     }
 
-    public void deleteByName(String name){
-        repository.deleteByName(name);
-    }
-
     public int updateById(String name, String description, int id){
         return repository.update(name,description,id);
     }

@@ -1,11 +1,13 @@
 package com.example.JavaBot.controller;
 
 import com.example.JavaBot.Entity.CapitalsInfo;
+import com.example.JavaBot.Entity.CapitalsInfoValidator;
 import com.example.JavaBot.Service.CapitalsInfoService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +17,13 @@ import java.util.Optional;
 public class CapitalController {
 
     private final CapitalsInfoService service;
+    private final CapitalsInfoValidator validator;
 
     private final Logger LOG = LoggerFactory.getLogger(CapitalController.class);
 
-    public CapitalController(@Autowired CapitalsInfoService service) {
+    public CapitalController(@Autowired CapitalsInfoService service,@Autowired CapitalsInfoValidator validator) {
         this.service = service;
+        this.validator = validator;
     }
 
     @GetMapping("/capital")
@@ -39,18 +43,26 @@ public class CapitalController {
     }
 
     @PostMapping("/capital")
-    public List<CapitalsInfo> addCapital(@RequestBody CapitalsInfo capitalsInfo) {
+    public List<CapitalsInfo> addCapital(@RequestBody CapitalsInfo capitalsInfo, BindingResult result) {
         LOG.info("Create a new capital - {}", capitalsInfo);
+        validator.validate(capitalsInfo,result);
+        if(result.hasErrors()){
+            throw new RuntimeException(result.getAllErrors().toString());
+        } else {
         service.create(capitalsInfo);
         return service.findAll();
-    }
+    }}
 
     @PostMapping("/capital/{id}")
-    public Optional<CapitalsInfo> updateCapital(@RequestBody CapitalsInfo capitalsInfo, @PathVariable int id) {
+    public Optional<CapitalsInfo> updateCapital(@RequestBody CapitalsInfo capitalsInfo, @PathVariable int id, BindingResult result) {
         LOG.info("Update capital with id={} , to Capital - {}", id, capitalsInfo);
+        validator.validate(capitalsInfo,result);
+        if(result.hasErrors()){
+            throw new RuntimeException(result.getAllErrors().toString());
+        } else {
         service.updateById(capitalsInfo.getName(), capitalsInfo.getDescription(), id);
         return service.findById(id);
-    }
+    }}
 
     @DeleteMapping("/capital/{id}")
     public void deleteById(@PathVariable int id) {
